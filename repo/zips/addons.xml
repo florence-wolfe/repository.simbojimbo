@@ -75,7 +75,7 @@
 		Automatically download subtitles as soon you start any video. Subtitles are downloaded from a number of online sources including the selected Kodi subtitles service.
 	</description>
   </extension>
-</addon><addon id="plugin.video.catlight" name="CatLight" provider-name="florence-wolfe" version="0.0.1~alpha3">
+</addon><addon id="plugin.video.catlight" name="CatLight" provider-name="florence-wolfe" version="0.0.1~alpha4">
     <requires>
         <import addon="xbmc.python" version="3.0.0" />
         <import addon="script.module.pil" version="1.1.7" />
