@@ -91,13 +91,15 @@ class Generator:
 
         self._remove_binaries()
 
-        if self._generate_addons_file(addons_xml_path):
+        addons_changed = self._generate_addons_file(addons_xml_path)
+        if addons_changed:
             print(
                 "Successfully updated {}".format(color_text(addons_xml_path, "yellow"))
             )
 
-            if self._generate_md5_file(addons_xml_path, md5_path):
-                print("Successfully updated {}".format(color_text(md5_path, "yellow")))
+        # Always regenerate MD5 to ensure it's current
+        if self._generate_md5_file(addons_xml_path, md5_path):
+            print("Successfully updated {}".format(color_text(md5_path, "yellow")))
 
     def _remove_binaries(self):
         """
@@ -148,41 +150,44 @@ class Generator:
             os.makedirs(zip_folder)
 
         final_zip = os.path.join(zip_folder, "{0}-{1}.zip".format(addon_id, version))
-        if not os.path.exists(final_zip):
-            zip = zipfile.ZipFile(final_zip, "w", compression=zipfile.ZIP_DEFLATED)
-            root_len = len(os.path.dirname(os.path.abspath(addon_folder)))
+        # Always regenerate the zip to ensure it matches the source files
+        zip_existed = os.path.exists(final_zip)
+        zip = zipfile.ZipFile(final_zip, "w", compression=zipfile.ZIP_DEFLATED)
+        root_len = len(os.path.dirname(os.path.abspath(addon_folder)))
 
-            for root, dirs, files in os.walk(addon_folder):
-                # remove any unneeded artifacts
-                for i in IGNORE:
-                    if i in dirs:
+        for root, dirs, files in os.walk(addon_folder):
+            # remove any unneeded artifacts
+            for i in IGNORE:
+                if i in dirs:
+                    try:
+                        dirs.remove(i)
+                    except:
+                        pass
+                for f in files:
+                    if f.startswith(i):
                         try:
-                            dirs.remove(i)
+                            files.remove(f)
                         except:
                             pass
-                    for f in files:
-                        if f.startswith(i):
-                            try:
-                                files.remove(f)
-                            except:
-                                pass
 
-                archive_root = os.path.abspath(root)[root_len:]
+            archive_root = os.path.abspath(root)[root_len:]
 
-                for f in files:
-                    fullpath = os.path.join(root, f)
-                    archive_name = os.path.join(archive_root, f)
-                    zip.write(fullpath, archive_name, zipfile.ZIP_DEFLATED)
+            for f in files:
+                fullpath = os.path.join(root, f)
+                archive_name = os.path.join(archive_root, f)
+                zip.write(fullpath, archive_name, zipfile.ZIP_DEFLATED)
 
-            zip.close()
-            size = convert_bytes(os.path.getsize(final_zip))
-            print(
-                "Zip created for {} ({}) - {}".format(
-                    color_text(addon_id, "cyan"),
-                    color_text(version, "green"),
-                    color_text(size, "yellow"),
-                )
+        zip.close()
+        size = convert_bytes(os.path.getsize(final_zip))
+        action = "Updated" if zip_existed else "Created"
+        print(
+            "Zip {} for {} ({}) - {}".format(
+                action,
+                color_text(addon_id, "cyan"),
+                color_text(version, "green"),
+                color_text(size, "yellow"),
             )
+        )
 
     def _copy_meta_files(self, addon_id, addon_folder):
         """
@@ -256,6 +261,16 @@ class Generator:
                     addons_root.append(addon_root)
                     updated = True
                     changed = True
+                else:
+                    # Version matches, but ensure addon_root content is up to date
+                    index = addons_root.findall("addon").index(addon_entry)
+                    addons_root.remove(addon_entry)
+                    addons_root.insert(index, addon_root)
+                    # Don't set updated/changed since version didn't change
+                    # but still regenerate zip and metadata to ensure sync
+                    self._create_zip(addon, id, version)
+                    self._copy_meta_files(addon, os.path.join(self.zips_path, id))
+                    continue
 
                 if updated:
                     # Create the zip files
