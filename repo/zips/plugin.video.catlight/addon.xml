@@ -1,4 +1,4 @@
-<addon id="plugin.video.catlight" name="CatLight" provider-name="florence-wolfe" version="0.0.1~alpha2">
+<addon id="plugin.video.catlight" name="CatLight" provider-name="florence-wolfe" version="0.0.1~alpha3">
     <requires>
         <import addon="xbmc.python" version="3.0.0"/>
         <import addon="script.module.pil" version="1.1.7"/>
