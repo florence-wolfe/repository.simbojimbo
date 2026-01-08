@@ -25,3 +25,6 @@
 [submodule "repo/plugin.service.catsubs"]
 	path = repo/plugin.service.catsubs
 	url = https://github.com/florence-wolfe/plugin.service.catsubs.git
+[submodule "repo/plugin.video.flolight"]
+	path = repo/plugin.video.flolight
+	url = https://github.com/florence-wolfe/plugin.video.flolight
