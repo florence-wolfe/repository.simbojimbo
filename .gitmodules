@@ -28,3 +28,6 @@
 [submodule "repo/plugin.video.catlight"]
 	path = repo/plugin.video.catlight
 	url = https://github.com/florence-wolfe/plugin.video.catlight
+[submodule "repo/skin.arctic.cat"]
+	path = repo/skin.arctic.cat
+	url = https://github.com/florence-wolfe/skin.arctic.cat
