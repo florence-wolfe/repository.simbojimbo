@@ -202,7 +202,7 @@
     <website>https://sniffio.readthedocs.io/</website>
     <source>https://github.com/python-trio/sniffio</source>
   </extension>
-</addon><addon id="skin.arctic.cat" name="Arctic Cat" provider-name="florence-wolfe" version="0.0.1~alpha2">
+</addon><addon id="skin.arctic.cat" name="Arctic Cat" provider-name="florence-wolfe" version="0.0.1~alpha4">
     <requires>
         <import addon="xbmc.gui" version="5.17.0" />
         <import addon="script.skinvariables" version="2.1.28" />
